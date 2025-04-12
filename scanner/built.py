@@ -18,7 +18,7 @@ class Built:
                 print(f"[+] VyOS Build Detected: {built_by}")
 
                 sus, recommendation = self.check_results_ssh(built_by)
-                print(f"[+] VyOS Build Information: {sus} - {recommendation}")
+                print(f"[!] VyOS Build Information: {sus} - {recommendation}")
 
                 return {'raw_data': built_by,
                 'suspicious': sus,
@@ -33,6 +33,7 @@ class Built:
     def check_results_ssh(self, built_by):
         built_by_official = [
             "maintainers@vyos.net",
+            "vyos-build-action@github.com",
             "sentrium s.l.",
             "vyos networks iberia s.l.u."
         ]
