@@ -21,12 +21,13 @@ def main(args):
     commands = [Version(), Built(), NistCVE()]
 
     if args.update or needs_update(LOCAL_JSON, MAX_AGE_DAYS):
-        print("[*] Updating local CVE database...")
+        #print("[*] Updating local CVE database...")
         update_cve_data(LOCAL_JSON, KEYWORDS)
-    else:
-        print(f"[✓] Local CVE file is up to date ({LOCAL_JSON})")
+    #else:
+        #print(f"[✓] Local CVE file is up to date ({LOCAL_JSON})")
 
-    print(f'\n[+] VyOS IP Address: {args.ip}\n')
+    if not args.json:
+        print(f'\n[+] VyOS IP Address: {args.ip}\n')
 
     ssh_client = SSHClient(args.ip, args.username, args.password, int(args.port))
     ssh_client.connect()
@@ -34,8 +35,29 @@ def main(args):
     for command in commands:
         res = command.run_ssh(ssh_client)
         all_data[command.__name__] = res
+
+    if args.json:
+        print(json.dumps(all_data, indent=4))
+    else:
+        print_txt_results(all_data, args.concise)
     
     ssh_client.disconnect()
+
+
+def print_txt_results(res, concise):
+    for command in res:
+        if (not concise and res[command]["raw_data"]) or res[command].get("recommendation") or res[command].get("suspicious"):
+            print(f'{command}:')
+            for item in res[command]:
+                if concise and item != "recommendation" and item != "suspicious":
+                    continue
+                if res[command][item]:
+                    print(f'\t{item}:')
+                    if isinstance(res[command][item], list):
+                        data = '\n\t\t'.join(res[command][item])  # ya son strings formateados
+                    else:
+                        data = res[command][item]
+                    print(f'\t\t{data}')
 
 
 def needs_update(filepath, max_days=15):
@@ -82,6 +104,8 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', help='The tested VyOS SSH port', default='22')
     parser.add_argument('-u', '--username', help='User name with admin Permissions', required=True)
     parser.add_argument('-ps', '--password', help='The password of the given user name', default='')
+    parser.add_argument('-j', '--json', help='Print the results as json format', action='store_true')
+    parser.add_argument('-c', '--concise', help='Print out only suspicious items and recommendations', action='store_true')
     parser.add_argument('-ud', '--update', help='Update the CVE Json file', action='store_true')
     args = parser.parse_args()
 

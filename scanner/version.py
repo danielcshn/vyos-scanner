@@ -16,7 +16,7 @@ class Version:
             match = re.search(r'Version:\s*VyOS\s+([\w\.\-]+)', data)
             if match:
                 version = match.group(1)
-                print(f"[+] VyOS version detected: {version}")
+                #print(f"[+] VyOS version detected: {version}")
 
                 result = self.check_results_ssh(version)
                 if result:
@@ -24,9 +24,9 @@ class Version:
                     support_status = result['support_status']
                     raw_data = result['raw_data']
                     recommendation = result['recommendation']
-                    print(f"[!] VyOS Build Information: {raw_data} - ({release_name}) - {support_status} {recommendation}")
-                else:
-                    print("[!] Version information could not be determined.")
+                    #print(f"[!] VyOS Build Information: {raw_data} - ({release_name}) - {support_status} {recommendation}")
+                #else:
+                    #print("[!] Version information could not be determined.")
 
                 return {'raw_data': version,
                 'release_name': release_name,
@@ -68,8 +68,8 @@ class Version:
 
                     if support_status == 'Unsupported':
                         recommendation = (
-                            f"\nVersion {version} ({release_name}) is no longer officially supported."
-                            f"\nIt is recommended to upgrade to a supported version: {', '.join(supported_versions)}."
+                            f"Version {version} ({release_name}) is no longer officially supported."
+                            f"It is recommended to upgrade to a supported version: {', '.join(supported_versions)}."
                         )
                     else:
                         recommendation = (

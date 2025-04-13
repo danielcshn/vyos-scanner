@@ -15,10 +15,10 @@ class Built:
             match = re.search(r'Built by:\s*(.+)', data)
             if match:
                 built_by = match.group(1)
-                print(f"[+] VyOS Build Detected: {built_by}")
+                #print(f"[+] VyOS Build Detected: {built_by}")
 
                 sus, recommendation = self.check_results_ssh(built_by)
-                print(f"[!] VyOS Build Information: {sus} - {recommendation}")
+                #print(f"[!] VyOS Build Information: {sus} - {recommendation}")
 
                 return {'raw_data': built_by,
                 'suspicious': sus,

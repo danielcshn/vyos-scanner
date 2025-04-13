@@ -23,13 +23,35 @@ class NistCVE:
 
                 result = self.check_results_ssh(version)
                 if result:
-                    print(f"\n[!] {len(result)} CVEs affecting version {version} were detected:\n")
+                    result_cves = []
+                    #print(f"\n[!] {len(result)} CVEs affecting version {version} were detected:\n")
                     for cve in result:
+
+                        result_cves.append(
+                            f"{cve['id']}: {cve['description']} - Recommendation: {cve['recommendation']}"
+                        )
+
+                        #result_cves.append({
+                        #    'cve_id': cve['id'],
+                        #    'vulnerable_cves': cve['description'],
+                        #    'recommendation': cve['recommendation']
+                        #})
+
                         #print(f"- {cve['id']}: {cve['description'][:150]}...")
-                        print(f"- {cve['id']}: {cve['description']}")
+                        #print()
+                        #result_cves = f"- {cve['id']}: {cve['description']}"
+                        #result_reco = f"{cve['recommendation']}"
+
                     return {
                         'raw_data': version,
-                        'vulnerable_cves': result
+                        'suspicious': f'{len(result_cves)} CVEs found',
+                        'recommendation': result_cves
+                    }
+                else:
+                    return {
+                        'raw_data': version,
+                        'suspicious': 'NO CVEs FOUND',
+                        'recommendation': 'No known CVEs found for this version'
                     }
             else:
                 raise Exception("No valid version was found in the command output.")
@@ -74,11 +96,13 @@ class NistCVE:
                 # Si aparece en alguna parte, lo agregamos
                 if found_in_description or found_in_criteria:
                     description = next((desc.get("value") for desc in descriptions if desc.get("lang") == "es"), None)
+                    recommendation = f'VyOS version: {version} is vulnerable to CVE(s). Upgrade to the latest version. (The CVEs list is from NVD)'
                     if not description:
                         description = next((desc.get("value") for desc in descriptions if desc.get("lang") == "en"), "No description.")
                     cve_matches.append({
                         "id": cve_id,
-                        "description": description
+                        "description": description,
+                        "recommendation": recommendation
                     })
 
             return cve_matches
