@@ -1,15 +1,32 @@
+import os
+import requests
 import argparse
+import json
+from datetime import datetime, timedelta
 
 from scanner.sshclient import SSHClient
-
+from scanner.nistcve import NistCVE
 from scanner.version import Version
 from scanner.built import Built
 
+
+LOCAL_JSON = './data/vyos_cves.json'
+KEYWORDS = ["vyos"]
+API_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+MAX_AGE_DAYS = 15
+
+
 def main(args):
     all_data = {}
-    commands = [Version(), Built()]
+    commands = [Version(), Built(), NistCVE()]
 
-    print(f'** VyOS ip address: {args.ip}\n')
+    if args.update or needs_update(LOCAL_JSON, MAX_AGE_DAYS):
+        print("[*] Updating local CVE database...")
+        update_cve_data(LOCAL_JSON, KEYWORDS)
+    else:
+        print(f"[✓] Local CVE file is up to date ({LOCAL_JSON})")
+
+    print(f'\n[+] VyOS IP Address: {args.ip}\n')
 
     ssh_client = SSHClient(args.ip, args.username, args.password, int(args.port))
     ssh_client.connect()
@@ -20,12 +37,52 @@ def main(args):
     
     ssh_client.disconnect()
 
+
+def needs_update(filepath, max_days=15):
+    if not os.path.exists(filepath):
+        return True
+    created = datetime.fromtimestamp(os.path.getmtime(filepath))
+    now = datetime.now()
+    return (now - created) > timedelta(days=max_days)
+
+
+def update_cve_data(filepath, keywords):
+    all_vulns = []
+
+    print("[*] Querying the NVD API...")
+    for keyword in keywords:
+        params = {
+            "keywordSearch": keyword,
+            "resultsPerPage": 2000
+        }
+
+        try:
+            response = requests.get(API_URL, params=params, timeout=30)
+            response.raise_for_status()
+            data = response.json()
+            vulns = data.get("vulnerabilities", [])
+            all_vulns.extend(vulns)
+            print(f"[+] '{keyword}' → {len(vulns)} vulnerabilities found!")
+        except Exception as e:
+            print(f"[!] Error while querying '{keyword}': {e}")
+
+    # Guardar solo si hay resultados
+    if all_vulns:
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        with open(filepath, 'w', encoding='utf-8') as f:
+            json.dump(all_vulns, f, indent=2)
+        print(f"[✓] File updated with {len(all_vulns)} vulnerabilities → {filepath}")
+    else:
+        print("[!] No results found, file not updated.")
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--ip', help='The tested VyOS IP address', required=True)
     parser.add_argument('-p', '--port', help='The tested VyOS SSH port', default='22')
     parser.add_argument('-u', '--username', help='User name with admin Permissions', required=True)
     parser.add_argument('-ps', '--password', help='The password of the given user name', default='')
+    parser.add_argument('-ud', '--update', help='Update the CVE Json file', action='store_true')
     args = parser.parse_args()
 
     main(args)
