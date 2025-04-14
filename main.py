@@ -104,7 +104,7 @@ if __name__ == '__main__':
     parser.add_argument('-i', '--ip', help='The tested VyOS IP address', required=True)
     parser.add_argument('-p', '--port', help='The tested VyOS SSH port', default='22')
     parser.add_argument('-u', '--username', help='User name with admin Permissions', required=True)
-    parser.add_argument('-ps', '--password', help='The password of the given user name', default='')
+    parser.add_argument('-ps', '--password', help='The password of the given user name', default='vyos')
     parser.add_argument('-j', '--json', help='Print the results as json format', action='store_true')
     parser.add_argument('-c', '--concise', help='Print out only suspicious items and recommendations', action='store_true')
     parser.add_argument('-ud', '--update', help='Update the CVE Json file', action='store_true')
