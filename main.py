@@ -29,7 +29,7 @@ def main(args):
     if not args.json:
         print(f'\n[+] VyOS IP Address: {args.ip}\n')
 
-    ssh_client = SSHClient(args.ip, args.username, args.password, int(args.port))
+    ssh_client = SSHClient(args.ip, args.username, args.password, int(args.port), args.key)
     ssh_client.connect()
     
     for command in commands:
@@ -101,6 +101,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', help='The tested VyOS SSH port', default='22')
     parser.add_argument('-u', '--username', help='User name with admin Permissions', required=True)
     parser.add_argument('-ps', '--password', help='The password of the given user name', default='vyos')
+    parser.add_argument('-k', '--key', help='Filename of optional private key(s) and/or certs to try for authentication', default='')
     parser.add_argument('-j', '--json', help='Print the results as json format', action='store_true')
     parser.add_argument('-c', '--concise', help='Print out only suspicious items and recommendations', action='store_true')
     parser.add_argument('-ud', '--update', help='Update the CVE Json file', action='store_true')
