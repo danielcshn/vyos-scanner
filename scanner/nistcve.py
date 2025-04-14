@@ -15,7 +15,6 @@ class NistCVE:
             data = sshc.run_command("show version")
             #print(data)  # Debug
 
-            #match = re.search(r'Version:\s*VyOS\s+([0-9]+\.[0-9]+\.[0-9]+)', data)
             match = re.search(r'Version:\s*VyOS\s+([\w\.\-]+)', data)
             if match:
                 version = match.group(1)
@@ -30,17 +29,6 @@ class NistCVE:
                         result_cves.append(
                             f"{cve['id']}: {cve['description']} - Recommendation: {cve['recommendation']}"
                         )
-
-                        #result_cves.append({
-                        #    'cve_id': cve['id'],
-                        #    'vulnerable_cves': cve['description'],
-                        #    'recommendation': cve['recommendation']
-                        #})
-
-                        #print(f"- {cve['id']}: {cve['description'][:150]}...")
-                        #print()
-                        #result_cves = f"- {cve['id']}: {cve['description']}"
-                        #result_reco = f"{cve['recommendation']}"
 
                     return {
                         'raw_data': version,
@@ -75,27 +63,24 @@ class NistCVE:
                 cve = vuln.get("cve", {})
                 cve_id = cve.get("id", "UNKNOWN")
 
-                # 1. Buscar en las descripciones si mencionan la versión directamente
                 descriptions = cve.get("descriptions", [])
                 found_in_description = any(version in desc.get("value", "") for desc in descriptions)
 
-                # 2. Buscar en criteria del cpeMatch
                 found_in_criteria = False
                 configurations = cve.get("configurations", [])
                 for config in configurations:
                     for node in config.get("nodes", []):
                         for cpe in node.get("cpeMatch", []):
                             criteria = cpe.get("criteria", "")
-                            # Busca la versión exacta en la CPE (ej: vyos:1.1.8)
+                            # Look for the exact version in the CPE (e.g. vyos:1.1.8)
                             if re.search(rf":{re.escape(version)}(?=[:*])", criteria):
                                 found_in_criteria = True
                                 break
                         if found_in_criteria:
                             break
 
-                # Si aparece en alguna parte, lo agregamos
                 if found_in_description or found_in_criteria:
-                    description = next((desc.get("value") for desc in descriptions if desc.get("lang") == "es"), None)
+                    description = next((desc.get("value") for desc in descriptions if desc.get("lang") == "en"), None)
                     recommendation = f'VyOS version: {version} is vulnerable to CVE(s). Upgrade to the latest version. (The CVEs list is from NVD)'
                     if not description:
                         description = next((desc.get("value") for desc in descriptions if desc.get("lang") == "en"), "No description.")

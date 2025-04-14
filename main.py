@@ -5,21 +5,20 @@ import json
 from datetime import datetime, timedelta
 
 from scanner.sshclient import SSHClient
+from scanner.users import Users
 from scanner.packages import Packages
 from scanner.nistcve import NistCVE
 from scanner.version import Version
 from scanner.built import Built
-
 
 LOCAL_JSON = './data/vyos_cves.json'
 KEYWORDS = ["vyos"]
 API_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 MAX_AGE_DAYS = 15
 
-
 def main(args):
     all_data = {}
-    commands = [Version(), Built(), NistCVE(), Packages()]
+    commands = [Version(), Users(), Built(), NistCVE(), Packages()]
 
     if args.update or needs_update(LOCAL_JSON, MAX_AGE_DAYS):
         #print("[*] Updating local CVE database...")
@@ -44,7 +43,6 @@ def main(args):
     
     ssh_client.disconnect()
 
-
 def print_txt_results(res, concise):
     for command in res:
         if (not concise and res[command]["raw_data"]) or res[command].get("recommendation") or res[command].get("suspicious"):
@@ -59,7 +57,6 @@ def print_txt_results(res, concise):
                     else:
                         data = res[command][item]
                     print(f'\t\t{data}')
-
 
 def needs_update(filepath, max_days=15):
     if not os.path.exists(filepath):
@@ -97,7 +94,6 @@ def update_cve_data(filepath, keywords):
         print(f"[✓] File updated with {len(all_vulns)} vulnerabilities → {filepath}")
     else:
         print("[!] No results found, file not updated.")
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
