@@ -3,11 +3,12 @@
 Forensics tool for VyOS. Search for suspicious properties and weak security points that need to be fixed on the router.
 
 This tool’s functionalities include the following: 
-- Get the version of the VyOS and map it to CVEs 
-- Check for possible CVEs in installed packages
-- Verify that the Built comes from reliable sources
-- Look for users with default passwords
-- System Health Check (Disk / Memory / Uptime)
+- Get the version of the VyOS and map it to CVEs.
+- Check for possible CVEs in installed packages.
+- Check the Build is from trusted official sources.
+- Check the use of default users and passwords.
+- Check the use of default ports.
+- System Health Check (Disk / Memory / Uptime).
 
 ## Executing and arguments
 

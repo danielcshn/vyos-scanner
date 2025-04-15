@@ -5,6 +5,7 @@ import json
 from datetime import datetime, timedelta
 
 from scanner.sshclient import SSHClient
+from scanner.ports import Ports
 from scanner.system import System
 from scanner.users import Users
 from scanner.packages import Packages
@@ -19,7 +20,7 @@ MAX_AGE_DAYS = 15
 
 def main(args):
     all_data = {}
-    commands = [Version(), Users(), Built(), System(), NistCVE(), Packages()]
+    commands = [Version(), Users(), Built(), System(), Ports(), NistCVE(), Packages()]
 
     if args.update or needs_update(LOCAL_JSON, MAX_AGE_DAYS):
         #print("[*] Updating local CVE database...")
