@@ -7,6 +7,7 @@ This tool’s functionalities include the following:
 - Check for possible CVEs in installed packages
 - Verify that the Built comes from reliable sources
 - Look for users with default passwords
+- System Health Check (Disk / Memory / Uptime)
 
 ## Executing and arguments
 
@@ -34,3 +35,12 @@ This tool requires Python 3.8 or later.
 	 ./main.py -i 192.168.1.1 -p 2080 -u vyos -ps vyos -j
 	 ./main.py -i 192.168.1.1 -p 2280 -u vyos -ps vyos -c
 	 ./main.py -i 192.168.1.1 -p 2222 -u admin -ps 1234 -k 'C:\RSA\key_rsa'
+
+## Legal Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
