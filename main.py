@@ -20,7 +20,11 @@ MAX_AGE_DAYS = 15
 
 def main(args):
     all_data = {}
-    commands = [Version(), Users(), Built(), System(), Ports(), NistCVE(), Packages()]
+
+    if args.skip_cve:
+    	commands = [Version(), Users(), Built(), System(), Ports()]
+    else:
+    	commands = [Version(), Users(), Built(), System(), Ports(), NistCVE(), Packages()]
 
     if args.update or needs_update(LOCAL_JSON, MAX_AGE_DAYS):
         #print("[*] Updating local CVE database...")
@@ -67,7 +71,6 @@ def needs_update(filepath, max_days=15):
     now = datetime.now()
     return (now - created) > timedelta(days=max_days)
 
-
 def update_cve_data(filepath, keywords):
     all_vulns = []
 
@@ -107,6 +110,7 @@ if __name__ == '__main__':
     parser.add_argument('-j', '--json', help='Print the results as json format', action='store_true')
     parser.add_argument('-c', '--concise', help='Print out only suspicious items and recommendations', action='store_true')
     parser.add_argument('-ud', '--update', help='Update the CVE Json file', action='store_true')
+    parser.add_argument('-sc', '--skip-cve', help='Skip CVE checks', action='store_true')
     args = parser.parse_args()
 
     main(args)
