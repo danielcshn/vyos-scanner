@@ -5,6 +5,7 @@ import json
 from datetime import datetime, timedelta
 
 from scanner.sshclient import SSHClient
+from scanner.console import Console
 from scanner.ports import Ports
 from scanner.system import System
 from scanner.users import Users
@@ -22,9 +23,9 @@ def main(args):
     all_data = {}
 
     if args.skip_cve:
-    	commands = [Version(), Users(), Built(), System(), Ports()]
+    	commands = [Version(), Users(), Built(), System(), Ports(), Console()]
     else:
-    	commands = [Version(), Users(), Built(), System(), Ports(), NistCVE(), Packages()]
+    	commands = [Version(), Users(), Built(), System(), Ports(), Console(), NistCVE(), Packages()]
 
     if args.update or needs_update(LOCAL_JSON, MAX_AGE_DAYS):
         #print("[*] Updating local CVE database...")
@@ -91,7 +92,6 @@ def update_cve_data(filepath, keywords):
         except Exception as e:
             print(f"[!] Error while querying '{keyword}': {e}")
 
-    # Guardar solo si hay resultados
     if all_vulns:
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         with open(filepath, 'w', encoding='utf-8') as f:
