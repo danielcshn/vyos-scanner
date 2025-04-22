@@ -41,7 +41,7 @@ class Console:
                     "Serial consoles are slow and limited. Disable unless required for diagnostics."
                 )
 
-            # Analizar configuración vulnerable del console-server
+            # Analyze vulnerable console-server configuration
             if config_server:
                 for line in config_server:
                     if re.search(r"ssh \{", line) or "ssh port" in line:

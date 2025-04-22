@@ -40,6 +40,15 @@ class Built:
 
         built_by_clean = built_by.strip().lower()
 
+        # nightly-build
+        if "autobuild@vyos.net" in built_by_clean:
+            return "nightly", (
+                "This system is using a nightly build (autobuild@vyos.net). "
+                "Nightly builds are not intended for production environments. "
+                "Consider upgrading to an official LTS release. "
+                "More info: https://vyos.net/get/nightly-builds/"
+            )
+
         for official in built_by_official:
             if official in built_by_clean:
                 if "maintainers@vyos.net" in built_by_clean:
