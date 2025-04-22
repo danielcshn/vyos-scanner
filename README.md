@@ -20,7 +20,7 @@ This tool’s functionalities include the following:
 - Check the Build is from trusted official sources.
 - Check the use of default users and passwords.
 - Check the use of default ports.
-- Check the use of Serial Console.
+- Check the use of Serial Console / Console-Server.
 - System Health Check (Disk / Memory / Uptime).
 
 ## Executing and arguments
