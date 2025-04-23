@@ -36,6 +36,9 @@ class System:
                 continue
 
             fs = parts[0]
+            if re.match(r'/dev/loop\d+', fs):
+                continue  # Ignore loopX partitions
+
             size = parts[1]
             used = parts[2]
             avail = parts[3]
