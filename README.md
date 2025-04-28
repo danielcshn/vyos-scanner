@@ -22,6 +22,7 @@ This tool’s functionalities include the following:
 - Check the use of default ports.
 - Check the use of SSHGuard. 
 - Check the use of Serial Console / Console-Server.
+- Check command history.
 - System Health Check (Disk / Memory / Uptime).
 
 ## Executing and arguments
