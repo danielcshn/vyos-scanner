@@ -14,10 +14,15 @@ class Packages:
 
         try:
             data = sshc.run_command("show version")
-            match = re.search(r'Version:\s*VyOS\s+(\d+)\.(\d+)', data)
+            match = re.search(r'Version:\s*VyOS\s+([\w\.\-]+)', data)
             if match:
-                major_version = f"{match.group(1)}.{match.group(2)}"
-                
+                raw_version = match.group(1).lower()
+                if re.match(r'20\d{2}\.\d{2}', raw_version):
+                    major_version = "1.5" # Las Stream 20xx actualmente son base 1.5
+                else:
+                    m2 = re.search(r'(1\.\d+)', raw_version)
+                    if m2:
+                        major_version = m2.group(1)
             match major_version:
                 case "1.0":
                     packages_10 = "bind9-host cluster-agents cluster-glue conntrack coreutils cron curl hostapd iperf iproute ipsec-tools iptables iptraf lldpd login net-tools ntp open-vm-tools openssh-server openssl openvpn passwd ppp pppoe pptpd rsync rsyslog snmp squid3 squidguard ssh ssmtp strongswan sudo wireshark-common wpasupplicant xz-utils libpam-radius-auth libpam-runtime"

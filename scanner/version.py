@@ -73,6 +73,25 @@ class Version:
                     )
                 }
 
+            # Detect Stream releases (format N.N-stream or YYYY.MM)
+            if re.match(r'1\.\d+-stream', version_clean) or re.match(r'20\d{2}\.\d{2}', version_clean):
+                base_match = re.search(r'(1\.\d+)', version_clean)
+                if base_match and base_match.group(1) in status:
+                    release_name = f"{status[base_match.group(1)][0]} Stream"
+                else:
+                    release_name = 'Stream Release'
+                    
+                return {
+                    'release_name': release_name,
+                    'support_status': 'Stream',
+                    'raw_data': version,
+                    'recommendation': (
+                        f"Version {version} is a Stream release. Stream versions are early-access milestones "
+                        f"between rolling and LTS releases. They are suitable for testing upcoming features but "
+                        f"are generally not recommended for mission-critical production environments."
+                    )
+                }
+
             # Detect official versions
             version_match = re.match(r'(\d+\.\d+)', version_clean)
             if version_match:

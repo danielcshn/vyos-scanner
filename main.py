@@ -15,6 +15,7 @@ from scanner.packages import Packages
 from scanner.nistcve import NistCVE
 from scanner.version import Version
 from scanner.built import Built
+from scanner.copyfail import CopyFail
 
 LOCAL_JSON = './data/vyos_cves.json'
 KEYWORDS = ["vyos"]
@@ -25,9 +26,9 @@ def main(args):
     all_data = {}
 
     if args.skip_cve:
-    	commands = [Version(), Users(), Built(), System(), Ports(), SSHGuard(), Console(), History()]
+    	commands = [Version(), Users(), Built(), System(), Ports(), SSHGuard(), Console(), History(), CopyFail()]
     else:
-    	commands = [Version(), Users(), Built(), System(), Ports(), SSHGuard(), Console(), History(), NistCVE(), Packages()]
+    	commands = [Version(), Users(), Built(), System(), Ports(), SSHGuard(), Console(), History(), NistCVE(), Packages(), CopyFail()]
 
     if args.update or needs_update(LOCAL_JSON, MAX_AGE_DAYS):
         #print("[*] Updating local CVE database...")
